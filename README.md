@@ -1,7 +1,7 @@
 
 Hi there! This project is a simple images-placeholder. Build on Node.js with TypeScript. 
 
-###Commands for development mode
+### Commands for development mode
 First you should install all project dependencies by running `npm install`
 
 After that use these:
@@ -24,7 +24,7 @@ npm run start
 ```
 
 
-###Commands for production mode
+### Commands for production mode
 If you haven't run `npm install` for dev mode earlier, you can install only production dependencies by running `npm install --production` 
 
 After that use this command to build from src and start the server for production:
@@ -34,7 +34,7 @@ npm run start-prod
 ```
 
 
-###How to use
+### How to use
 This project isn't hosted anywhere at the moment. So you should run it locally with the commands listed above. 
 
 When the server is started visit `/img` path with the following query params to get an image:
