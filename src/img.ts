@@ -60,6 +60,12 @@ export async function getImg(req: Request, res: Response): Promise<void> {
         return;
     }
 
+    try {
+        await fsPromises.mkdir('images/resized');
+    } catch {
+        // assuming that directory already exists and it's ok
+    }
+
     sharp(sourceImagePath)
         .resize(width, height)
         .toFile(resultImagePath, function (err) {
