@@ -1,8 +1,8 @@
 import {promises as fsPromises} from 'fs';
 import {Request, Response} from 'express';
-import sharp from 'sharp';
 import path from 'path';
 
+import {resize} from './utils/imageProcessing';
 import {SEND_FILE_OPTS} from './consts';
 
 type Query = {
@@ -66,13 +66,11 @@ export async function getImg(req: Request, res: Response): Promise<void> {
         // assuming that directory already exists and it's ok
     }
 
-    sharp(sourceImagePath)
-        .resize(width, height)
-        .toFile(resultImagePath, function (err) {
-            if (err) {
-                res.status(400).send('Something went wrong').end();
-                return;
-            }
+    resize({width, height, sourceImagePath, resultImagePath})
+        .then(() => {
             res.sendFile(path.resolve(resultImagePath), SEND_FILE_OPTS);
+        })
+        .catch(() => {
+            res.status(400).send('Something went wrong').end();
         });
 }
