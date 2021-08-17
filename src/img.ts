@@ -3,7 +3,7 @@ import {Request, Response} from 'express';
 import path from 'path';
 
 import {resize} from './utils/imageProcessing';
-import {SEND_FILE_OPTS} from './consts';
+import {SEND_FILE_OPTS, IMAGES_FOLDER, RESIZED_IMAGES_FOLDER} from './consts';
 
 type Query = {
     filename?: string;
@@ -44,7 +44,7 @@ export async function getImg(req: Request, res: Response): Promise<void> {
     const height = parseInt(req.query.height as string);
 
     const resultImageName = `${filename}-${width}x${height}.jpg`;
-    const resultImagePath = path.resolve(`images/resized/${resultImageName}`);
+    const resultImagePath = path.resolve(`${RESIZED_IMAGES_FOLDER}/${resultImageName}`);
 
     const resultImageExists = await isThereAnImage(resultImagePath);
     if (resultImageExists) {
@@ -53,20 +53,20 @@ export async function getImg(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    const sourceImagePath = path.normalize(`images/${filename}.jpg`);
+    const sourceImagePath = path.normalize(`${IMAGES_FOLDER}/${filename}.jpg`);
     const sourceImageExists = await isThereAnImage(sourceImagePath);
     if (!sourceImageExists) {
         res.status(404).send("Can't find the file by the filename you provided").end();
         return;
     }
 
-    try {
-        await fsPromises.mkdir('images/resized');
-    } catch {
-        // assuming that directory already exists and it's ok
-    }
-
-    resize({width, height, sourceImagePath, resultImagePath})
+    resize({
+        width,
+        height,
+        sourceImagePath,
+        resultImageName,
+        resultImageFolder: RESIZED_IMAGES_FOLDER,
+    })
         .then(() => {
             res.sendFile(path.resolve(resultImagePath), SEND_FILE_OPTS);
         })
